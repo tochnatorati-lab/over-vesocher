@@ -1,7 +1,7 @@
 {
-  "version": "1.0.7",
+  "version": "1.0.8",
   "file": "over-vesocher.html",
   "extras": "app/over-vesocher.ico|app/launch.vbs",
-  "notes": "הכפתור 'חשב המלצות' מראה עכשיו את התוצאה",
+  "notes": "מעכשיו התוכנה בודקת עדכונים בכל פתיחה",
   "page": "https://github.com/tochnatorati-lab/over-vesocher"
 }
