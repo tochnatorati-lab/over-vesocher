@@ -1,7 +1,7 @@
 {
-  "version": "1.0.5",
+  "version": "1.0.6",
   "file": "over-vesocher.html",
   "extras": "app/over-vesocher.ico|app/launch.vbs",
-  "notes": "תיקון האייקון בשולחן העבודה",
+  "notes": "תיקון: כפתור לשאלות בלשונית השקעות",
   "page": "https://github.com/tochnatorati-lab/over-vesocher"
 }

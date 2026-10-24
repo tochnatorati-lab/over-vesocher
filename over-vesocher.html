@@ -337,7 +337,7 @@ details.fold[open] > summary::after{content:'▴'}
 'use strict';
 // גרסת התוכנה. קובץ ההפעלה (launch.vbs) קורא את שתי השורות האלה כדי לבדוק אם יש גרסה חדשה.
 // הבדיקה מורידה רק את קובץ התוכנה. התוכנה עצמה חסומה לאינטרנט ולא שולחת שום נתון.
-const APP_VERSION = '1.0.5';
+const APP_VERSION = '1.0.6';
 const UPDATE_BASE_URL = 'https://raw.githubusercontent.com/tochnatorati-lab/over-vesocher/main/';
 /* =====================================================================
    עובר וסוחר: ניהול הכסף של הבית. קובץ אחד, בלי אינטרנט.
@@ -1906,7 +1906,7 @@ function bottomLine(){
     if(C.toInvest >= 1000) L.push(['info', `<b>להעביר ${money(C.toInvest)} מהעו"ש ל${lt}.</b> זה כסף שאין לו תפקיד בעו"ש ולא צריך לכרית.`, null, null, howFor(lt)]);
   }
   if(S && S.amount >= 100) L.push(['info', `<b>לקבוע הוראת קבע של ${money(S.amount)} בחודש</b>, ב-${S.day} בכל חודש${S.payDay?' (יומיים אחרי המשכורת)':''}, ל${C && C.missing>0 ? 'קרן כספית. כשהכרית תתמלא, משנים אותה ל'+lt : lt}.`, null, null, C && C.missing>0 ? HOW.order : howFor(lt)]);
-  if(!asked) L.push(['info', 'כדי שההמלצה תתאים לך, ענה על השאלות הקצרות למטה ("הפרטים שלך").']);
+  if(!asked) L.push(['info', 'כדי שההמלצה תתאים לך, ענה על כמה שאלות קצרות.', 'profile', 'לשאלות']);
   return L;
 }
 function marketLine(){
@@ -1930,7 +1930,7 @@ function viewInvest(){
   const BL = bottomLine();
   return `
   <div class="card bl"><h2>מה לעשות עכשיו, בקיצור</h2>
-    ${BL ? `<ol class="bl-list">${BL.map(([k,t,go,lbl,how])=>`<li class="${k}"><span>${t}${how?`<details class="how"><summary>איך עושים את זה בפועל?</summary>${how}</details>`:''}</span>${go?`<button class="btn sm" data-goto="${go}">${lbl} ←</button>`:''}</li>`).join('')}</ol>`
+    ${BL ? `<ol class="bl-list">${BL.map(([k,t,go,lbl,how])=>`<li class="${k}"><span>${t}${how?`<details class="how"><summary>איך עושים את זה בפועל?</summary>${how}</details>`:''}</span>${go==='profile'?`<button class="btn sm primary" data-act="openprofile">${lbl} ↓</button>`:go?`<button class="btn sm" data-goto="${go}">${lbl} ←</button>`:''}</li>`).join('')}</ol>`
       : '<div class="empty">כשיהיו נתוני הכנסות והוצאות, יופיע כאן מה לעשות עם הכסף.</div>'}
     ${marketLine()}
     ${marketCheck ? `<div class="mkt-form"><b>עדכון בעצמך: שני מספרים, דקה אחת</b>
@@ -1943,7 +1943,7 @@ function viewInvest(){
       ${db.settings.marketOverride?'<br><button class="linkbtn" data-act="marketreset">לחזור לנתונים שבקובץ</button>':''}
       <br>אפשרות נוספת: לכתוב לי בפרויקט "עדכן את מצב השוק", ואני אעדכן גם את התחזית וההערות.</div></div>` : ''}
   </div>
-  <details class="fold" ${P.horizon?'':'open'}><summary>👤 הפרטים שלך (משפיעים על ההמלצה)</summary>
+  <details class="fold" id="profileFold" ${P.horizon?'':'open'}><summary>👤 הפרטים שלך (משפיעים על ההמלצה)</summary>
   <div class="card">
     <p class="small muted">התשובות נשמרות רק במחשב הזה. ${avg?`לפי ${avg.months} החודשים האחרונים: נכנס בממוצע ${money(avg.income)}, יוצא ${money(avg.expense)}, נשאר ${money(avg.surplus)} בחודש.`:'כשיהיו נתוני הכנסות והוצאות, אחשב לבד כמה נשאר לך כל חודש.'}</p>
     <div class="form">
@@ -2879,6 +2879,11 @@ document.addEventListener('click', e=>{
     db.settings.maaserPct = Math.max(0, Math.min(100, parseFloat($('#sPct').value)||0));
     db.settings.maaserOpening = parseFloat($('#sOpen').value)||0;
     save(); render(); toast('נשמר ✓');
+  }
+  else if(act==='openprofile'){
+    const d = $('#profileFold'); if(!d) return;
+    d.open = true; d.scrollIntoView({behavior:'smooth', block:'start'});
+    setTimeout(()=>{ const i = $('#savings'); if(i) i.focus({preventScroll:true}); }, 400);
   }
   else if(act==='saveprofile'){
     ['savings','debt','age','kids'].forEach(k=>{ const v = $('#'+k).value; db.profile[k] = v===''?(k==='savings'?0:undefined):+v; });
