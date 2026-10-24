@@ -1,7 +1,7 @@
 {
-  "version": "1.0.3",
+  "version": "1.0.4",
   "file": "over-vesocher.html",
   "extras": "app/over-vesocher.ico|app/launch.vbs",
-  "notes": "מעכשיו גם האייקון מתעדכן לבד",
+  "notes": "תיקון הפעלה מתיקייה עם שם בעברית",
   "page": "https://github.com/tochnatorati-lab/over-vesocher"
 }
