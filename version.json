@@ -1,6 +1,7 @@
 {
-  "version": "1.0.2",
+  "version": "1.0.3",
   "file": "over-vesocher.html",
-  "notes": "אייקון חד יותר בשורת המשימות",
+  "extras": "app/over-vesocher.ico|app/launch.vbs",
+  "notes": "מעכשיו גם האייקון מתעדכן לבד",
   "page": "https://github.com/tochnatorati-lab/over-vesocher"
 }
