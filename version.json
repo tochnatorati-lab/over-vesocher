@@ -1,7 +1,7 @@
 {
-  "version": "1.0.6",
+  "version": "1.0.7",
   "file": "over-vesocher.html",
   "extras": "app/over-vesocher.ico|app/launch.vbs",
-  "notes": "תיקון: כפתור לשאלות בלשונית השקעות",
+  "notes": "הכפתור 'חשב המלצות' מראה עכשיו את התוצאה",
   "page": "https://github.com/tochnatorati-lab/over-vesocher"
 }
