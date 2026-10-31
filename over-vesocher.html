@@ -93,6 +93,7 @@ details.card[open] > summary::before{transform:rotate(-90deg)}
 main > .grid{margin-bottom:18px;align-items:start}
 .seg{display:inline-flex;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:4px;gap:4px;box-shadow:var(--shadow);max-width:100%;flex-wrap:wrap}
 .seg button{border:0;background:none;font:inherit;font-size:14px;font-weight:600;color:var(--muted);padding:8px 14px;border-radius:9px;cursor:pointer}
+.seg.sm button{padding:5px 10px;font-size:13px}
 .seg button.on{background:var(--primary);color:var(--on-primary)}
 .grid.two{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
 .grid.two > .card{margin-bottom:0}
@@ -339,7 +340,7 @@ details.fold[open] > summary::after{content:'▴'}
 'use strict';
 // גרסת התוכנה. קובץ ההפעלה (launch.vbs) קורא את שתי השורות האלה כדי לבדוק אם יש גרסה חדשה.
 // הבדיקה מורידה רק את קובץ התוכנה. התוכנה עצמה חסומה לאינטרנט ולא שולחת שום נתון.
-const APP_VERSION = '1.0.8';
+const APP_VERSION = '1.1.0';
 const UPDATE_BASE_URL = 'https://raw.githubusercontent.com/tochnatorati-lab/over-vesocher/main/';
 /* =====================================================================
    עובר וסוחר: ניהול הכסף של הבית. קובץ אחד, בלי אינטרנט.
@@ -388,11 +389,24 @@ const EXP_CATS = ['מזון וסופר','אוכל בחוץ ומשלוחים','ד
   'תקשורת (טלפון / אינטרנט / טלוויזיה)','רכב ודלק','תחבורה ציבורית','ביטוחים','בריאות ופארם','חינוך וילדים',
   'ביגוד והנעלה','בית וריהוט','מנויים ושירותים דיגיטליים','פנאי וחופשות','מתנות ושמחות','עמלות בנק וריביות',
   'החזר הלוואות','מעשרות וצדקה','הפקדה לחיסכון / השקעה','משיכת מזומן','חיוב כרטיס אשראי (לא נספר)','לא להחשיב (העברה / הלוואה לאחר)','אחר'];
-const INC_CATS = ['משכורת','הכנסה מעסק','קצבאות (ביטוח לאומי וכו\')','מתנות','החזרים וזיכויים','העברה בין חשבונות (לא נספר)','לא שלי (הועבר הלאה לאחר)','אחר'];
+const INC_CATS = ['משכורת','הכנסה מעסק','קצבאות (ביטוח לאומי וכו\')','מתנות','החזרים וזיכויים','הפקדת מזומן לבנק','העברה בין חשבונות (לא נספר)','לא שלי (הועבר הלאה לאחר)','אחר'];
 const NOT_MINE = 'לא שלי (הועבר הלאה לאחר)';
 const MAASER_CAT = 'מעשרות וצדקה';
 const JOINT = 'משותף';
-const ownerList = () => [...db.settings.people, JOINT];
+// חשבון מזומן: חשבון נפרד, לא חלק מהבנק. משיכה מהכספומט עוברת אליו, ולא נספרת כהוצאה.
+const CASH = 'מזומן', CASH_OUT = 'משיכת מזומן', CASH_IN = 'הפקדת מזומן לבנק';
+const cashOn = () => !!db.settings.cashOn;
+const bankOwners = () => [...db.settings.people, JOINT];
+const ownerList = () => cashOn() ? [...bankOwners(), CASH] : bankOwners();
+function applyCashMode(){ [CASH_OUT, CASH_IN].forEach(c=>cashOn() ? NOT_COUNTED.add(c) : NOT_COUNTED.delete(c)); }
+function cashBalance(){
+  const S = db.settings.cashStart || {amount:0, date:'0000-00-00', id:0};
+  let v = +S.amount||0;
+  db.tx.forEach(t=>{ if(t.splitOf) return; const a = +(t.origAmount ?? t.amount);
+    if(t.owner===CASH){ if(t.date > S.date || (t.date===S.date && t.id >= S.id)) v += t.type==='income' ? a : -a; }
+    else if(!t.card && t.date > S.date){ if(t.category===CASH_OUT && t.type==='expense') v += a; else if(t.category===CASH_IN && t.type==='income') v -= a; } });
+  return Math.round(v*100)/100;
+}
 const ownerOptions = sel => ownerList().map(o=>`<option ${o===(sel||JOINT)?'selected':''}>${esc(o)}</option>`).join('');
 const SAVE_CAT = 'הפקדה לחיסכון / השקעה';
 const NOT_COUNTED = new Set(['חיוב כרטיס אשראי (לא נספר)','העברה בין חשבונות (לא נספר)','לא להחשיב (העברה / הלוואה לאחר)','לא שלי (הועבר הלאה לאחר)']);
@@ -447,6 +461,7 @@ const SRC_CAT_MAP = [
   [/פנאי|בידור|ספורט|תיירות|טיסות|מלונ|נופש|תרבות|ספרים/, 'פנאי וחופשות'],
 ];
 const INC_KW = [
+  ['הפקדת מזומן לבנק',['הפקדת מזומן','הפקדה במזומן','הפקדת מזומנים','הפקדה מזומן','הפקדת שטרות']],
   ['העברה בין חשבונות (לא נספר)',['העברה מחשבון','העברה בין חשבונות','מחשבון אחר']],
   ['מתנות',['מתנה','מתנת','מזל טוב','שי לחג']],
   ['משכורת',['משכורת','שכר','salary','משכ.','תלוש','מעסיק','מעביד','שכר עבודה','משכורות','מילואים','תגמול','כולל ','מלגה','מלגת','דמי אבטלה','דמי לידה','דמי מחלה']],
@@ -898,6 +913,7 @@ function monthBar(){
   return `<div class="monthbar"><button class="btn sm" data-act="mprev">→ חודש קודם</button><span class="m">${monthName(curMonth)}</span><button class="btn sm" data-act="mnext">חודש הבא ←</button></div>`;
 }
 function render(){
+  applyCashMode();
   ensureMonth();
   const m = $('#main');
   const info = TAB_INFO[tab] || {l:'', sub:''};
@@ -974,12 +990,15 @@ function balanceCard(){
   const old = have.filter(o=>B[o].date && daysBetween(B[o].date, todayStr())>20);
   const dupBal = have.filter(o=>have.some(o2=>o2!==o && Math.abs(+B[o2].amount - +B[o].amount) < 0.01 && B[o2].date===B[o].date));
   const missing = db.settings.people.filter(o=>!B[o]);
-  return `<div class="card"><h2>🏦 כמה כסף יש בבנק</h2>
-    <div class="merged"><div class="lbl">יתרה ממוזגת: כל החשבונות יחד</div><div class="val ${total>=0?'':'neg'}">${money(total)}</div>
-      <div class="sub">${have.map(o=>o===JOINT?'חשבון משותף':esc(o)).join(' + ')}${missing.length?` · <b>חסרה היתרה של ${missing.map(esc).join(' ו')}</b> <button class="btn sm" data-act="baledit">לכתוב ידנית</button>`:''}</div>
+  const withCash = cashOn() && db.settings.balWithCash, cash = cashOn() ? cashBalance() : 0, shown = total + (withCash ? cash : 0);
+  return `<div class="card"><h2>🏦 כמה כסף יש ${cashOn()?'לכם':'בבנק'}</h2>
+    <div class="merged">${cashOn()?`<div class="seg sm" style="float:left"><button class="${withCash?'':'on'}" data-act="cashview" data-v="0">בלי מזומן</button><button class="${withCash?'on':''}" data-act="cashview" data-v="1">עם מזומן</button></div>`:''}
+      <div class="lbl">יתרה ממוזגת: ${withCash?'הבנק והמזומן יחד':'כל חשבונות הבנק יחד'}</div><div class="val ${shown>=0?'':'neg'}">${money(shown)}</div>
+      <div class="sub">${have.map(o=>o===JOINT?'חשבון משותף':esc(o)).join(' + ')}${withCash?' + מזומן ('+money(cash)+')':''}${missing.length?` · <b>חסרה היתרה של ${missing.map(esc).join(' ו')}</b> <button class="btn sm" data-act="baledit">לכתוב ידנית</button>`:''}</div>
       ${tab!=='bank'?'<button class="btn sm primary" data-goto="bank" style="margin-top:10px">לעובר ושב הממוזג ←</button>':''}</div>
     <div class="grid">
     ${have.map(o=>`<div class="stat"><div class="lbl">${o===JOINT?'חשבון משותף':esc(o)}</div><div class="val ${B[o].amount>=0?'':'neg'}">${money(B[o].amount)}</div><div class="sub">נכון ל-${fmtDate(B[o].date)}${B[o].src==='manual'?' (הוזן ידנית)':''}</div><button class="linkbtn" data-baldel="${esc(o)}">הסר את היתרה הזו</button></div>`).join('')}
+    ${cashOn()?`<div class="stat"><div class="lbl">💵 מזומן</div><div class="val ${cash>=0?'':'neg'}">${money(cash)}</div><div class="sub">חשבון נפרד, לא חלק מהבנק</div>${tab!=='bank'?'<button class="linkbtn" data-goto="bank">לחשבון המזומן</button>':''}</div>`:''}
     </div>
     ${total<0?'<div class="tip bad"><b>החשבון במינוס</b>ריבית על מינוס יקרה מאוד. כדאי לסגור אותו לפני כל חיסכון או השקעה.</div>':''}
     ${dupBal.length?`<div class="tip bad"><b>אותה יתרה מופיעה בשני חשבונות: ${dupBal.map(o=>o===JOINT?'משותף':esc(o)).join(' ו')}</b>כנראה אותו קובץ יובא פעמיים לחשבונות שונים. לחץ "הסר את היתרה הזו" בחשבון הלא נכון.</div>`:''}
@@ -1037,7 +1056,7 @@ function catOptions(type, sel){ return (type==='income'?INC_CATS:EXP_CATS).map(c
 // היתרה מחושבת אחורה וקדימה מהיתרה הידועה של כל חשבון (מקובץ הבנק או ידנית).
 const ledgerOrder = (a,b) => a.date.localeCompare(b.date) || (a.imp===b.imp && a.ord!=null && b.ord!=null ? a.ord-b.ord : a.id-b.id);
 function bankLedger(owners){
-  const bankTx = db.tx.filter(t=>!t.card && !t.splitOf);
+  const bankTx = db.tx.filter(t=>!t.card && !t.splitOf && t.owner!==CASH);
   const sign = t => (t.type==='income'?1:-1) * (+(t.origAmount ?? t.amount));
   const after = new Map(), known = [], unknown = [];
   owners.forEach(o=>{
@@ -1080,7 +1099,32 @@ function bankView(all){
 }
 function viewBank(){
   if(!db.tx.length && !Object.keys(db.balances).length) return `<div class="card"><p>עוד אין נתונים. מייבאים קובץ עובר ושב של כל חשבון, והיתרה של כולם תופיע כאן יחד.</p><button class="btn primary" data-goto="import">ייבוא קובץ מהבנק</button></div>`;
-  return `${balanceCard()}${monthBar()}<div class="card"><h2>עובר ושב ממוזג: כל החשבונות בטבלה אחת</h2>${bankView(true)}</div>`;
+  return `${balanceCard()}${cashCard()}${monthBar()}<div class="card"><h2>עובר ושב ממוזג: כל חשבונות הבנק בטבלה אחת</h2>${bankView(true)}</div>`;
+}
+function cashCard(){
+  if(!cashOn()) return `<div class="card"><h2>💵 מזומן</h2>
+    <p class="small">אפשר לנהל את הכסף המזומן כחשבון נפרד, לצד ${bankOwners().map(esc).join(', ')}. הכנסות והוצאות במזומן נרשמות שם, ולא מתערבבות עם היתרה בבנק.</p>
+    <button class="btn primary" data-act="cashon">הוסף חשבון מזומן</button></div>`;
+  const v = cashBalance(), S = db.settings.cashStart || {};
+  const list = db.tx.filter(t=>t.owner===CASH && !t.splitOf).sort((a,b)=>b.date.localeCompare(a.date) || b.id-a.id).slice(0,8);
+  const def = curMonth===todayStr().slice(0,7) ? todayStr() : curMonth+'-01';
+  return `<div class="card"><h2>💵 מזומן</h2>
+    <div class="row" style="justify-content:space-between;align-items:flex-end;margin-bottom:12px">
+      <div><div class="small muted">יש עכשיו במזומן</div><div style="font-size:28px;font-weight:800" class="${v<0?'neg':''}">${money(v)}</div></div>
+      <button class="btn sm" data-act="cashset">ספרתי את הארנק: לעדכן סכום</button></div>
+    <div class="form" style="background:var(--bg);padding:12px;border-radius:12px">
+      <div class="field"><label>סוג</label><select id="fType"><option value="expense">הוצאה במזומן</option><option value="income">הכנסה במזומן</option></select></div>
+      <div class="field"><label>תאריך</label><input type="date" id="fDate" value="${def}"></div>
+      <div class="field" style="grid-column:span 2"><label>על מה (למשל: ירקן, תרומה לבית הכנסת, שיעור פרטי)</label><input id="fDesc" autocomplete="off"></div>
+      <div class="field"><label>סכום ₪</label><input type="number" id="fAmt" min="0" step="0.01" inputmode="decimal"></div>
+      <div class="field"><label>קטגוריה</label><select id="fCat">${catOptions('expense','אחר')}</select></div>
+      <input type="hidden" id="fOwner" value="${CASH}">
+      <div class="field hidden" id="fExWrap"><label><input type="checkbox" id="fEx"> לא לחשב ממנה מעשר</label></div>
+      <div class="field"><button class="btn primary" data-act="addtx">רשום</button></div>
+    </div>
+    ${list.length?`<div class="tablewrap" style="margin-top:12px"><table>${list.map(t=>`<tr><td class="small">${fmtDate(t.date)}</td><td>${esc(t.description)}<div class="small muted">${esc(t.category)}</div></td><td class="num ${t.type==='income'?'pos':''}">${t.type==='income'?'+':'-'}${money(t.amount)}</td><td><button class="x" data-del="${t.id}" title="מחק">✕</button></td></tr>`).join('')}</table></div>`:''}
+    <p class="small muted">משיכה מהכספומט עוברת לבד מהבנק למזומן, ולא נספרת כהוצאה. מה שקונים במזומן נספר כשרושמים אותו כאן. הכנסות במזומן נכנסות גם לחישוב המעשרות.${S.date?` הסכום ההתחלתי: ${money(+S.amount||0)} ב-${fmtDate(S.date)}.`:''}</p>
+    <button class="linkbtn" data-act="cashoff">הסר את חשבון המזומן</button></div>`;
 }
 // כשהתיאור כללי ("הע. אינטרנט") והפירוט ידוע, הפירוט הוא הכותרת
 function txTitle(t){
@@ -1266,13 +1310,13 @@ function setupImport(){
   imp.acct = null;
   for(const r of imp.rows.slice(0, Math.max(hr,1))){ const line = r.join(' ').replace(/[\u200e\u200f]/g,''); const m = line.match(/(?:חשבון|כרטיס)[^\d]{0,15}([\d][\d\-\/ ]{3,}\d)/); if(m){ imp.acct = m[1].replace(/\s/g,''); break; } }
   const acctMap = db.settings.acctOwner || {};
-  const defOwner = (imp.acct && ownerList().includes(acctMap[imp.acct])) ? acctMap[imp.acct] : '';
+  const defOwner = (imp.acct && bankOwners().includes(acctMap[imp.acct])) ? acctMap[imp.acct] : '';
   const opt = (sel) => '<option value="-1">—</option>' + header.map((h,i)=>`<option value="${i}" ${i===sel?'selected':''}>${esc(h||('עמודה '+(i+1)))}</option>`).join('');
   $('#impArea').innerHTML = `
   <div class="card"><h2>שלב 2: בדוק שהעמודות נכונות</h2>
     <div class="ownpick"><b>של מי הקובץ הזה?</b>${imp.acct?` <span class="small muted">חשבון ${esc(imp.acct)}</span>`:''}
-      <div class="seg">${ownerList().map(o=>`<button type="button" data-iown="${esc(o)}" class="${o===defOwner?'on':''}">${esc(o)}</button>`).join('')}</div>
-      <select id="iOwner" style="display:none"><option value=""></option>${ownerList().map(o=>`<option ${o===defOwner?'selected':''}>${esc(o)}</option>`).join('')}</select></div>
+      <div class="seg">${bankOwners().map(o=>`<button type="button" data-iown="${esc(o)}" class="${o===defOwner?'on':''}">${esc(o)}</button>`).join('')}</div>
+      <select id="iOwner" style="display:none"><option value=""></option>${bankOwners().map(o=>`<option ${o===defOwner?'selected':''}>${esc(o)}</option>`).join('')}</select></div>
     <p class="small muted">קובץ: ${esc(imp.name)} · ${data.length} שורות. ניחשתי את העמודות, תקן אם צריך:</p>
     <div class="form">
       <div class="field"><label>עמודת תאריך</label><select id="iDate">${opt(cDate)}</select></div>
@@ -2352,7 +2396,7 @@ const hasBank = () => Object.keys(db.balances||{}).length > 0;
 const liquidAssets = () => db.assets.filter(a=>ASSET_KINDS[a.kind]?.liquid).reduce((s,a)=>s+(+a.amount||0),0);
 function liquidTotal(){ return bankTotal() + liquidAssets(); }
 function netWorth(){
-  let assets = bankTotal(), debts = 0;
+  let assets = bankTotal() + (cashOn() ? Math.max(0, cashBalance()) : 0), debts = 0;
   db.assets.forEach(a=>{ if(ASSET_KINDS[a.kind]?.debt) debts += +a.amount||0; else assets += +a.amount||0; });
   return {assets, debts, net: assets-debts};
 }
@@ -2512,6 +2556,7 @@ function viewWealth(){
     <p class="small muted">היתרות בעו"ש נלקחות מקבצי הבנק. את השאר מוסיפים כאן: את הסכומים בפנסיה, בקרן ההשתלמות ובקופות הגמל רואים בדוח השנתי, באפליקציה של החברה, או באתר "הר הכסף" של משרד האוצר. הכל נשמר רק במחשב הזה.</p>
     <table>
       ${Object.entries(db.balances).map(([o,b])=>`<tr><td>🏦 עו"ש ${o===JOINT?'משותף':esc(o)}<div class="small muted">מקובץ הבנק, נכון ל-${fmtDate(b.date)}</div></td><td class="num">${money(b.amount)}</td><td></td></tr>`).join('')}
+      ${cashOn()?`<tr><td>💵 מזומן<div class="small muted">מחושב מהתנועות במזומן</div></td><td class="num">${money(cashBalance())}</td><td></td></tr>`:''}
       ${rowsA.map(a=>assetEdit===a.id?`<tr><td colspan="3">${form(a)}</td></tr>`:`<tr><td>${esc(a.name||ASSET_KINDS[a.kind]?.label)}<div class="small muted">${esc(ASSET_KINDS[a.kind]?.label||'')} · ${esc(a.owner||JOINT)}${a.updated?` · עודכן ${fmtDate(a.updated)}`:''}</div></td>
         <td class="num ${ASSET_KINDS[a.kind]?.debt?'neg':''}">${ASSET_KINDS[a.kind]?.debt?'-':''}${money(a.amount)}</td>
         <td style="white-space:nowrap"><button class="x" data-aedit="${a.id}" title="ערוך">✎</button><button class="x" data-adel="${a.id}" title="מחק">✕</button></td></tr>`).join('')}
@@ -2714,6 +2759,24 @@ document.addEventListener('click', e=>{
   const act = a.dataset.act;
   if(act==='mprev'){ curMonth = addMonths(curMonth,-1); render(); }
   else if(act==='mnext'){ curMonth = addMonths(curMonth,1); render(); }
+  else if(act==='cashon'){
+    const a = prompt('כמה מזומן יש לכם עכשיו, בערך? (אפשר 0)', '0'); if(a===null) return;
+    const n = parseFloat(String(a).replace(/[^\d.\-]/g,'')); if(isNaN(n)){ toast('צריך מספר'); return; }
+    db.settings.cashOn = true; db.settings.cashStart = {amount:n, date:todayStr(), id:db.nextId};
+    save(); render(); toast('חשבון המזומן נוסף ✓');
+  }
+  else if(act==='cashset'){
+    const a = prompt('כמה מזומן יש עכשיו בארנק ובבית?', String(cashBalance())); if(a===null) return;
+    const n = parseFloat(String(a).replace(/[^\d.\-]/g,'')); if(isNaN(n)){ toast('צריך מספר'); return; }
+    db.settings.cashStart = {amount:n, date:todayStr(), id:db.nextId}; save(); render(); toast('עודכן ✓');
+  }
+  else if(act==='cashoff'){
+    const n = db.tx.filter(t=>t.owner===CASH).length;
+    if(!confirm(n ? `יש ${n} תנועות במזומן. הן לא יימחקו, אלא יעברו ל"${JOINT}". להסיר את חשבון המזומן?` : 'להסיר את חשבון המזומן?')) return;
+    db.tx.forEach(t=>{ if(t.owner===CASH) t.owner = JOINT; });
+    db.settings.cashOn = false; db.settings.balWithCash = false; save(); render(); toast('הוסר ✓');
+  }
+  else if(act==='cashview'){ db.settings.balWithCash = a.dataset.v==='1'; save(); render(); }
   else if(act==='addtx'){
     addOpen = true;
     const type = $('#fType').value, date = $('#fDate').value, description = $('#fDesc').value.trim(), amount = parseFloat($('#fAmt').value);

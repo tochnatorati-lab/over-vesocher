@@ -1,7 +1,7 @@
 {
-  "version": "1.0.8",
+  "version": "1.1.0",
   "file": "over-vesocher.html",
   "extras": "app/over-vesocher.ico|app/launch.vbs",
-  "notes": "מעכשיו התוכנה בודקת עדכונים בכל פתיחה",
+  "notes": "חדש: חשבון מזומן נפרד, ויתרה עם או בלי מזומן",
   "page": "https://github.com/tochnatorati-lab/over-vesocher"
 }
