@@ -1,7 +1,7 @@
 {
-  "version": "1.2.0",
+  "version": "1.2.1",
   "file": "over-vesocher.html",
   "extras": "app/over-vesocher.ico|app/launch.vbs",
-  "notes": "עיצוב ידידותי: כפתורי בחירה במקום רשימות, פחות מלל, והייבוא זוכר את העמודות",
+  "notes": "בלי גלילה הצידה בטבלאות",
   "page": "https://github.com/tochnatorati-lab/over-vesocher"
 }
