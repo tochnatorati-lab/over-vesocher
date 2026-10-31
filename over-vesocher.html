@@ -262,6 +262,58 @@ details.rowmenu .menu button.danger:hover{background:var(--red-soft)}
 .mkt{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-top:14px;padding:14px 16px;border:1px solid var(--border);border-radius:12px}
 .mkt > div{flex:1;min-width:240px}
 .mkt-n{display:flex;gap:16px;flex-wrap:wrap;margin:6px 0;font-size:14px}
+/* בחירה ידידותית במקום רשימות נפתחות */
+.fx-hidden{display:none!important}
+input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+input[type=number]{-moz-appearance:textfield;appearance:textfield}
+.pick{display:inline-flex;align-items:center;justify-content:space-between;gap:10px;height:42px;padding:0 14px;width:auto;min-width:150px;max-width:100%;border:1px solid var(--border);border-radius:12px;background:var(--card);color:var(--text);font:inherit;font-size:14.5px;cursor:pointer;text-align:right;transition:border-color .15s,background .15s,box-shadow .15s}
+.field .pick{width:100%}
+.pick .t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pick .ed{flex:none;font-size:12px;color:var(--primary);opacity:.8;font-weight:600}
+.pick:hover{border-color:color-mix(in srgb,var(--primary) 40%,var(--border));background:color-mix(in srgb,var(--primary) 4%,var(--card))}
+.pick.empty .t{color:var(--muted)}
+.pick.inrow{height:32px;width:auto;max-width:240px;border-radius:999px;padding:0 12px;font-size:13.5px;background:var(--bg);border-color:transparent}
+.pick.inrow .ed{opacity:0;transition:opacity .15s}
+.pick.inrow:hover{border-color:color-mix(in srgb,var(--primary) 35%,var(--border))}
+.pick.inrow:hover .ed{opacity:.8}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chipopt{border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:999px;padding:0 15px;min-height:40px;font:inherit;font-size:14px;cursor:pointer;transition:all .15s}
+.chipopt:hover{border-color:color-mix(in srgb,var(--primary) 40%,var(--border))}
+.chipopt.on{background:var(--primary);border-color:var(--primary);color:var(--on-primary);font-weight:600;box-shadow:0 2px 8px color-mix(in srgb,var(--primary) 30%,transparent)}
+.picker{position:fixed;z-index:60;background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow-lg);padding:8px;width:270px;max-height:min(440px,70vh);display:flex;flex-direction:column;gap:8px;animation:pickin .14s ease-out}
+.picker.wide{width:440px}
+.picker .ph{font-size:12.5px;color:var(--muted);font-weight:600;padding:4px 8px 0}
+.picker .plist{overflow:auto;display:grid;grid-template-columns:1fr;gap:3px}
+.picker.wide .plist{grid-template-columns:1fr 1fr}
+.picker .plist button{all:unset;box-sizing:border-box;cursor:pointer;padding:10px 12px;border-radius:10px;font-size:14px;line-height:1.35;color:var(--text)}
+.picker .plist button:hover,.picker .plist button:focus-visible{background:var(--bg)}
+.picker .plist button.on{background:var(--primary-soft);color:var(--primary);font-weight:700}
+.picker .psearch{height:40px;width:100%}
+.pickback{position:fixed;inset:0;z-index:59;background:rgba(10,15,30,.25)}
+@keyframes pickin{from{opacity:0;transform:translateY(-4px) scale(.98)}}
+@media(max-width:700px){
+  .picker,.picker.wide{left:10px!important;right:10px!important;top:auto!important;bottom:10px!important;width:auto;max-height:72vh;border-radius:20px;padding:12px}
+  .picker .plist button{padding:13px 14px;font-size:15px}
+}
+button.btn,label.btn{transition:background .15s,border-color .15s,box-shadow .15s,transform .05s}
+.monthbar .btn{border-radius:10px}
+details.more{margin-top:10px}
+details.more > summary{cursor:pointer;list-style:none;display:inline-flex;align-items:center;gap:6px;color:var(--primary);font-weight:600;font-size:14px;padding:6px 2px}
+details.more > summary::-webkit-details-marker{display:none}
+details.more > summary::after{content:'▾';font-size:12px}
+details.more[open] > summary::after{content:'▴'}
+details.tipd{display:block}
+details.tipd > summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:10px}
+details.tipd > summary::-webkit-details-marker{display:none}
+details.tipd > summary::after{content:'פרטים ▾';flex:none;font-size:12.5px;color:var(--primary);font-weight:600}
+details.tipd[open] > summary::after{content:'סגור ▴'}
+details.tipd .tipbody{margin-top:8px}
+details.colfold{margin-top:12px;border:1px solid var(--border);border-radius:12px;padding:10px 14px}
+details.colfold > summary{cursor:pointer;list-style:none;font-weight:600;display:flex;align-items:center;gap:6px}
+details.colfold > summary::-webkit-details-marker{display:none}
+details.colfold > summary .cf{margin-inline-start:auto;color:var(--primary);font-size:13px}
+details.colfold[open] > summary .cf{display:none}
+details.colfold .form{margin-top:10px}
 details.fold{margin-bottom:12px}
 .card.flash{animation:flash 1.6s ease-out}
 @keyframes flash{0%{box-shadow:0 0 0 4px color-mix(in srgb,var(--gold) 70%,transparent)}100%{box-shadow:var(--shadow)}}
@@ -310,15 +362,6 @@ details.fold[open] > summary::after{content:'▴'}
       <div><div class="t">עובר וסוחר</div><div class="s">ניהול הכסף של הבית</div></div>
     </div>
     <nav id="nav"></nav>
-    <div class="side-foot">
-      <div class="lock" title="התוכנה חסומה לאינטרנט. כל המידע נשמר רק במחשב הזה.">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
-        <span>עובד בלי אינטרנט. המידע נשאר רק במחשב הזה.<br><span style="opacity:.7" id="verLbl">גרסה</span></span>
-      </div>
-      <div class="theme" id="theme">
-        <button data-theme-set="auto">אוטומטי</button><button data-theme-set="light">בהיר</button><button data-theme-set="dark">כהה</button>
-      </div>
-    </div>
   </aside>
   <div class="scrim" id="scrim"></div>
   <div class="content">
@@ -340,7 +383,7 @@ details.fold[open] > summary::after{content:'▴'}
 'use strict';
 // גרסת התוכנה. קובץ ההפעלה (launch.vbs) קורא את שתי השורות האלה כדי לבדוק אם יש גרסה חדשה.
 // הבדיקה מורידה רק את קובץ התוכנה. התוכנה עצמה חסומה לאינטרנט ולא שולחת שום נתון.
-const APP_VERSION = '1.1.0';
+const APP_VERSION = '1.2.0';
 const UPDATE_BASE_URL = 'https://raw.githubusercontent.com/tochnatorati-lab/over-vesocher/main/';
 /* =====================================================================
    עובר וסוחר: ניהול הכסף של הבית. קובץ אחד, בלי אינטרנט.
@@ -752,7 +795,7 @@ function carInsuranceCard(){
     <p class="small muted">מצב השוק נכון ל-${fmtDate(MARKET.updated)}. ${M.note}</p>
     ${verdict}
     <div class="row" style="margin:8px 0 14px"><span class="small">כמה עולה לך ביטוח הרכב בשנה (חובה + מקיף/צד ג')?</span><input type="number" id="carAnnual" value="${db.settings.carInsAnnual||''}" placeholder="₪ לשנה" style="width:130px"><button class="btn sm" data-act="carsave">בדוק</button></div>
-    <h3>איך להוזיל, צעד אחרי צעד</h3>
+    <details class="more"><summary>איך להוזיל, צעד אחרי צעד</summary>
     <ol>
       <li><b>ביטוח חובה:</b> המחיר שלו נקבע בפיקוח, אבל הוא שונה בין החברות. באתר של רשות שוק ההון (משרד האוצר) יש מחשבון שמראה את המחיר בכל חברה. בדרך כלל עולה ${money(M.mandatory[0])} עד ${money(M.mandatory[1])} לשנה.</li>
       <li><b>לבקש 3 הצעות</b> לפחות חודש לפני החידוש: מהחברה הנוכחית, מחברה ישירה ומסוכן ביטוח. אחר כך להגיד לחברה הנוכחית מה ההצעה הזולה. הרבה פעמים היא משווה.</li>
@@ -763,7 +806,7 @@ function carInsuranceCard(){
       <li><b>מערכות בטיחות</b> (בלימה אוטומטית, מיגון) ותק נהיגה בלי תביעות מזכים בהנחה. לבקש שירשמו אותם.</li>
       <li><b>ביטוח לפי שימוש:</b> אם נוסעים מעט, יש פוליסות שמחירן לפי הקילומטרים.</li>
       <li><b>לשלם בתשלום אחד</b> כשאפשר. תשלומים לפעמים כוללים ריבית.</li>
-    </ol>
+    </ol></details>
     ${C.tx.length?`<p class="small muted">התשלומים שמצאתי: ${C.tx.slice(-6).map(t=>`${esc(t.description)} ${money(t.amount)} (${fmtDate(t.date)})`).join(' · ')}</p>`:''}
   </div>`;
 }
@@ -904,7 +947,7 @@ function applyTheme(){
   if(t==='auto') document.documentElement.removeAttribute('data-theme'); else document.documentElement.dataset.theme = t;
   document.querySelectorAll('[data-theme-set]').forEach(b=>b.classList.toggle('on', b.dataset.themeSet===t));
 }
-$('#theme').addEventListener('click', e=>{ const b = e.target.closest('[data-theme-set]'); if(!b) return; db.settings.theme = b.dataset.themeSet; save(); applyTheme(); });
+document.addEventListener('click', e=>{ const b = e.target.closest('[data-theme-set]'); if(!b) return; db.settings.theme = b.dataset.themeSet; save(); applyTheme(); });
 applyTheme();
 function ensureMonth(){
   if(!curMonth){ const ms = monthsWithData(); curMonth = ms.length ? ms[ms.length-1] : todayStr().slice(0,7); }
@@ -1044,7 +1087,8 @@ function todoCard(){
   if(db.tx.length && (!lb || (new Date(todayStr()) - new Date(lb))/86400000 > 30)) todo.push(['warn', 'עבר יותר מחודש מאז הגיבוי האחרון. שמור גיבוי כדי לא לאבד את הנתונים.', 'backup', 'לגיבוי']);
   if(!todo.length) return '<div class="tip good"><b>הכל מסודר 👍</b>אין כרגע משהו דחוף לעשות.</div>';
   return `<div class="card"><h2>✅ מה כדאי לעשות עכשיו</h2>
-    ${todo.slice(0,6).map(([k,txt,tab,btn],i)=>`<div class="tip ${k}" style="display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap"><span><b style="display:inline">${i+1}.</b> ${txt}</span><button class="btn sm" data-goto="${tab}">${btn} ←</button></div>`).join('')}
+    ${(()=>{ const row = ([k,txt,tab,btn],i)=>`<div class="tip ${k}" style="display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap"><span><b style="display:inline">${i+1}.</b> ${txt}</span><button class="btn sm" data-goto="${tab}">${btn} ←</button></div>`;
+      const L = todo.slice(0,6); return L.slice(0,3).map(row).join('') + (L.length>3 ? `<details class="more"><summary>עוד ${L.length-3} דברים</summary>${L.slice(3).map((x,i)=>row(x,i+3)).join('')}</details>` : ''); })()}
   </div>`;
 }
 
@@ -1306,6 +1350,9 @@ function setupImport(){
     if(!anyNeg || looksCard) mode = 'allexp';
   }
   imp.hr = hr; imp.header = header;
+  // אותו סוג קובץ (אותן כותרות) כבר יובא? זוכרים איזו עמודה היא מה
+  imp.sig = header.filter(Boolean).join('|');
+  const M = (db.settings.colMaps||{})[imp.sig];
   // מספר החשבון מראש הקובץ (אם יש), כדי לזכור של מי הוא
   imp.acct = null;
   for(const r of imp.rows.slice(0, Math.max(hr,1))){ const line = r.join(' ').replace(/[\u200e\u200f]/g,''); const m = line.match(/(?:חשבון|כרטיס)[^\d]{0,15}([\d][\d\-\/ ]{3,}\d)/); if(m){ imp.acct = m[1].replace(/\s/g,''); break; } }
@@ -1313,11 +1360,12 @@ function setupImport(){
   const defOwner = (imp.acct && bankOwners().includes(acctMap[imp.acct])) ? acctMap[imp.acct] : '';
   const opt = (sel) => '<option value="-1">—</option>' + header.map((h,i)=>`<option value="${i}" ${i===sel?'selected':''}>${esc(h||('עמודה '+(i+1)))}</option>`).join('');
   $('#impArea').innerHTML = `
-  <div class="card"><h2>שלב 2: בדוק שהעמודות נכונות</h2>
+  <div class="card"><h2>${M?'שלב 2: של מי הקובץ?':'שלב 2: בדוק שהעמודות נכונות'}</h2>
     <div class="ownpick"><b>של מי הקובץ הזה?</b>${imp.acct?` <span class="small muted">חשבון ${esc(imp.acct)}</span>`:''}
       <div class="seg">${bankOwners().map(o=>`<button type="button" data-iown="${esc(o)}" class="${o===defOwner?'on':''}">${esc(o)}</button>`).join('')}</div>
       <select id="iOwner" style="display:none"><option value=""></option>${bankOwners().map(o=>`<option ${o===defOwner?'selected':''}>${esc(o)}</option>`).join('')}</select></div>
-    <p class="small muted">קובץ: ${esc(imp.name)} · ${data.length} שורות. ניחשתי את העמודות, תקן אם צריך:</p>
+    <details class="colfold" ${M?'':'open'}><summary>${M?'✓ העמודות כמו בפעם הקודמת':'העמודות'} <span class="small muted">· ${esc(imp.name)} · ${data.length} שורות</span><span class="cf">${M?'לשנות':''}</span></summary>
+    ${M?'':'<p class="small muted" style="margin:8px 0">ניחשתי איזו עמודה היא מה. אם משהו לא נכון, תקן. בפעם הבאה אזכור.</p>'}
     <div class="form">
       <div class="field"><label>עמודת תאריך</label><select id="iDate">${opt(cDate)}</select></div>
       <div class="field"><label>עמודת תיאור / בית עסק</label><select id="iDesc">${opt(cDesc)}</select></div>
@@ -1332,11 +1380,19 @@ function setupImport(){
       <div class="field" id="wBill"><label>עמודת תאריך חיוב (בכרטיס אשראי)</label><select id="iBill">${opt(cBill)}</select></div>
       <div class="field" id="wBal"><label>עמודת יתרה (כמה כסף יש בחשבון)</label><select id="iBal">${opt(cBal)}</select></div>
       <div class="field"><label>עמודת פירוט / הערה (ממי, למי, אם יש)</label><select id="iNote">${opt(cNote)}</select></div>
-    </div>
+    </div></details>
     <div id="impPrev" style="margin-top:14px"></div>
   </div>`;
+  if(M) COL_IDS.forEach(id=>{ if(!(id in M)) return; const el = $('#'+id);
+    el.value = id==='iMode' ? M.iMode : String(M[id]==null ? -1 : header.indexOf(M[id])); if(el.selectedIndex < 0) el.value = '-1'; });
   ['iOwner','iDate','iDesc','iMode','iAmt','iDeb','iCred','iBill','iCat','iBal','iNote'].forEach(id=>$('#'+id).addEventListener('change', previewImport));
   previewImport();
+}
+const COL_IDS = ['iDate','iDesc','iMode','iAmt','iDeb','iCred','iBill','iCat','iBal','iNote'];
+function rememberCols(){
+  if(!imp.sig || !$('#iDate')) return;
+  const m = {}; COL_IDS.forEach(id=>{ const v = $('#'+id).value; m[id] = id==='iMode' ? v : (+v >= 0 ? imp.header[+v] : null); });
+  db.settings.colMaps = {...(db.settings.colMaps||{}), [imp.sig]: m};
 }
 function buildImported(){
   const g = id => +$('#'+id).value;
@@ -1579,16 +1635,16 @@ function viewInsights(){
   const ins = findInsights();
   return `<div class="card"><h2>תובנות וחיסכון</h2>
     <p class="muted small">אני עובר על כל התנועות ומחפש חיובים כפולים, מנויים שחוזרים כל חודש, הוצאות שעלו ועמלות.</p>
-    ${ins.length ? ins.map(i=>`<div class="tip ${i.kind}"><b>${esc(i.title)}</b>${i.html}</div>`).join('') : '<div class="tip good"><b>לא מצאתי משהו חריג 👍</b>ככל שיהיו יותר חודשים של נתונים, אוכל לזהות יותר.</div>'}
+    ${ins.length ? ins.map((i,k)=>`<details class="tip tipd ${i.kind}" ${k===0?'open':''}><summary><b>${esc(i.title)}</b></summary><div class="tipbody">${i.html}</div></details>`).join('') : '<div class="tip good"><b>לא מצאתי משהו חריג 👍</b>ככל שיהיו יותר חודשים של נתונים, אוכל לזהות יותר.</div>'}
     ${reconcileCard()}
     ${carInsuranceCard()}
-    <h3>רעיונות כלליים שחוסכים הרבה</h3>
+    <details class="more"><summary>💡 רעיונות כלליים שחוסכים הרבה</summary>
     <ul>
       <li><b>תקשורת:</b> חבילות סלולר ואינטרנט מתייקרות בשקט אחרי תקופת המבצע. שיחה אחת לחברה (או מעבר) חוסכת לרוב מאות שקלים בשנה.</li>
       <li><b>ביטוחים:</b> בדוק ב"הר הביטוח" (אתר משרד האוצר) שאין לך ביטוחים כפולים, ושאל על הנחה לביטוח רכב ודירה מול חברה אחרת.</li>
       <li><b>עמלות בנק:</b> בקש מסלול עמלות מוזל, ובדוק את דמי כרטיס האשראי. הרבה פעמים מוותרים עליהם אם מבקשים.</li>
       <li><b>מנויים:</b> בטל מה שלא השתמשת בו בחודש האחרון. אפשר תמיד לחזור.</li>
-    </ul></div>`;
+    </ul></details></div>`;
 }
 
 // ---------- תקציב והוצאות שנתיות ----------
@@ -2362,12 +2418,89 @@ document.addEventListener('toggle', e=>{
 }, true);
 document.addEventListener('click', e=>{ if(!e.target.closest('details.rowmenu')) document.querySelectorAll('details.rowmenu[open]').forEach(x=>x.open = false); });
 window.addEventListener('scroll', ()=>Date.now()-(window._rmT||0)>250 && document.querySelectorAll('details.rowmenu[open]').forEach(x=>x.open = false), true);
+// ---------- בחירה ידידותית: במקום רשימות נפתחות עם חץ ----------
+// כל <select> מוחלף בכפתור ברור (או בכפתורי בחירה כשיש מעט אפשרויות). ה-select נשאר מוסתר, כך שכל הקוד ממשיך לעבוד.
+const CAT_ICON = {'מזון וסופר':'🛒','אוכל בחוץ ומשלוחים':'🍕','דיור (שכירות / משכנתא)':'🏠','ארנונה ומים':'🚰','חשמל וגז':'💡',
+  'תקשורת (טלפון / אינטרנט / טלוויזיה)':'📱','רכב ודלק':'🚗','תחבורה ציבורית':'🚌','ביטוחים':'🛡️','בריאות ופארם':'💊','חינוך וילדים':'🎒',
+  'ביגוד והנעלה':'👕','בית וריהוט':'🛋️','מנויים ושירותים דיגיטליים':'📺','פנאי וחופשות':'🏖️','מתנות ושמחות':'🎁','עמלות בנק וריביות':'🏦',
+  'החזר הלוואות':'📉','מעשרות וצדקה':'💝','הפקדה לחיסכון / השקעה':'🐷','משיכת מזומן':'💵','חיוב כרטיס אשראי (לא נספר)':'💳',
+  'לא להחשיב (העברה / הלוואה לאחר)':'↔️','אחר':'❔','משכורת':'💼','הכנסה מעסק':'🧾',"קצבאות (ביטוח לאומי וכו')":'🏛️','מתנות':'🎁',
+  'החזרים וזיכויים':'↩️','הפקדת מזומן לבנק':'💵','העברה בין חשבונות (לא נספר)':'🔁','לא שלי (הועבר הלאה לאחר)':'↪️','משותף':'👥','מזומן':'💵'};
+const optText = o => { const ic = CAT_ICON[o.text] || (db.settings.people.includes(o.text) ? '👤' : ''); return (ic ? ic + '  ' : '') + o.text; };
+const realOpts = sel => [...sel.options].filter(o=>o.text.trim()!=='');
+function enhanceSelects(root){
+  (root||document).querySelectorAll('#main select:not([data-fx])').forEach(sel=>{
+    sel.dataset.fx = 1;
+    if(sel.id==='iOwner' || sel.style.display==='none') return;
+    const opts = realOpts(sel), inRow = !!sel.closest('td');
+    if(!inRow && opts.length <= 4 && opts.every(o=>o.text.length <= 14) && opts.reduce((n,o)=>n+o.text.length,0) <= 32){
+      const w = document.createElement('div'); w.className = 'chips'; w._sel = sel;
+      opts.forEach(o=>{ const b = document.createElement('button'); b.type = 'button'; b.className = 'chipopt'; b.dataset.v = o.value; b.textContent = o.text; w.append(b); });
+      sel.classList.add('fx-hidden'); sel.after(w);
+    } else {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'pick' + (inRow ? ' inrow' : ''); b._sel = sel;
+      b.title = 'לחצו כדי לשנות';
+      sel.classList.add('fx-hidden'); sel.after(b);
+    }
+  });
+  syncPicks();
+}
+function syncPicks(){
+  document.querySelectorAll('.pick').forEach(b=>{ const sel = b._sel; if(!sel) return; const o = sel.options[sel.selectedIndex];
+    const txt = o && o.text.trim() ? optText(o) : 'בחרו...';
+    b.classList.toggle('empty', !(o && o.text.trim()));
+    b.innerHTML = `<span class="t">${esc(txt)}</span><span class="ed">${b.classList.contains('inrow')?'✎':'שינוי ✎'}</span>`; });
+  document.querySelectorAll('.chips').forEach(w=>{ const sel = w._sel; if(!sel) return;
+    w.querySelectorAll('.chipopt').forEach(c=>c.classList.toggle('on', c.dataset.v===sel.value)); });
+}
+function pickValue(sel, v){
+  if(sel.value === v){ syncPicks(); return; }
+  sel.value = v; sel.dispatchEvent(new Event('change', {bubbles:true})); setTimeout(syncPicks, 0);
+}
+function closePicker(){ document.querySelectorAll('.picker,.pickback').forEach(x=>x.remove()); }
+function openPicker(btn){
+  closePicker(); window._pkT = Date.now();
+  const sel = btn._sel, opts = realOpts(sel), many = opts.length > 9;
+  const lbl = sel.closest('.field')?.querySelector('label')?.textContent?.trim();
+  const pop = document.createElement('div'); pop.className = 'picker' + (many ? ' wide' : ''); pop._btn = btn;
+  pop.innerHTML = `${lbl?`<div class="ph">${esc(lbl)}</div>`:''}${many?'<input class="psearch" placeholder="חיפוש..." autocomplete="off">':''}
+    <div class="plist">${opts.map(o=>`<button type="button" data-pv="${esc(o.value)}" class="${o.value===sel.value?'on':''}">${esc(optText(o))}</button>`).join('')}</div>`;
+  if(innerWidth <= 700){ const bk = document.createElement('div'); bk.className = 'pickback'; document.body.append(bk); }
+  document.body.append(pop);
+  if(innerWidth > 700){
+    const r = btn.getBoundingClientRect(), h = pop.offsetHeight, w = pop.offsetWidth;
+    pop.style.top = (r.bottom + 6 + h > innerHeight ? Math.max(8, r.top - h - 6) : r.bottom + 6) + 'px';
+    pop.style.left = Math.min(Math.max(8, r.right - w), innerWidth - w - 8) + 'px';
+  }
+  const on = pop.querySelector('.plist button.on'); if(on) on.scrollIntoView({block:'nearest'});
+  const q = pop.querySelector('.psearch'); if(q && innerWidth > 700) q.focus();
+}
+document.addEventListener('click', e=>{
+  const pb = e.target.closest('.pick'); if(pb){ openPicker(pb); return; }
+  const ch = e.target.closest('.chipopt'); if(ch){ pickValue(ch.parentElement._sel, ch.dataset.v); return; }
+  const pv = e.target.closest('[data-pv]'); if(pv){ const sel = pv.closest('.picker')._btn._sel; closePicker(); pickValue(sel, pv.dataset.pv); return; }
+  if(!e.target.closest('.picker')) closePicker();
+}, true);
+document.addEventListener('input', e=>{ if(e.target.classList.contains('psearch')){ const q = e.target.value.trim();
+  e.target.closest('.picker').querySelectorAll('.plist button').forEach(b=>b.style.display = !q || b.textContent.includes(q) ? '' : 'none'); } });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closePicker();
+  if(e.key==='Enter' && e.target.classList.contains('psearch')){ const b = [...e.target.closest('.picker').querySelectorAll('.plist button')].find(x=>x.style.display!=='none'); if(b) b.click(); } });
+window.addEventListener('scroll', e=>{ if(Date.now()-(window._pkT||0) > 400 && !(e.target.closest && e.target.closest('.picker'))) closePicker(); }, true);
+window.addEventListener('resize', closePicker);
+// רשימות שנוספות אחרי הציור (תצוגה מקדימה של ייבוא, טפסים נפתחים) ועדכוני ערך מהקוד
+new MutationObserver(()=>{ if(document.querySelector('#main select:not([data-fx])')) enhanceSelects(); }).observe(document.getElementById('main'), {childList:true, subtree:true});
+['change','input'].forEach(ev=>document.addEventListener(ev, ()=>setTimeout(syncPicks, 0)));
 function decorate(){
+  enhanceSelects();
   const hb = document.querySelector('[data-act=helpshow]');
   if(hb){ hb.classList.toggle('on', !!db.settings.helpMode); hb.title = db.settings.helpMode ? 'הסתר הסברים' : 'הצג הסברים על המסך הזה'; }
   document.body.classList.toggle('help', !!db.settings.helpMode);
   document.querySelectorAll('#main .card > h2 + p.small, #main .card > .row + p.small').forEach(el=>{
     const t = el.textContent.trim(); if(HINTS.some(h=>t.startsWith(h))) el.classList.add('hint'); });
+  // הסברים ארוכים באפור: מוסתרים, ומופיעים כשלוחצים "הסבר" למעלה
+  document.querySelectorAll('#main p.small.muted, #main p.muted.small, #main .card > p.small').forEach(el=>{
+    if(el.closest('.tip') || el.querySelector('button,input,label,select')) return;
+    if(el.textContent.trim().length > 90) el.classList.add('hint'); });
   if(!db.settings.helpMode) return;
   document.querySelectorAll('#main .stat .lbl, #main .card > h2, #main .card > .row > h2').forEach(el=>{
     if(el.dataset.dec) return; el.dataset.dec = 1;
@@ -2479,8 +2612,8 @@ function standingOrderCard(){
       <div class="stat"><div class="lbl">באיזה יום</div><div class="val">${S.day} לחודש</div><div class="sub">${S.payDay?`יומיים אחרי שהמשכורת נכנסת (בערך ב-${S.payDay})`:'קצת אחרי שהמשכורת נכנסת'}</div></div>
       <div class="stat"><div class="lbl">אחרי שנה</div><div class="val">${money(S.amount*12)}</div><div class="sub">ועוד רווח קטן</div></div>
     </div>
-    <p><b>לאן:</b> ${S.toCushion?'ל<b>קרן כספית</b> או פיקדון, עד שכרית הביטחון מלאה. אחרי זה ממשיכים לקופת גמל להשקעה או לפי ההצעה בלשונית "השקעות".':'כרית הביטחון מלאה, אז אפשר לשים את זה ב<b>קופת גמל להשקעה</b> או לפי ההצעה בלשונית "השקעות".'}</p>
-    <p><b>איך:</b> ברוב הבנקים ובתי ההשקעות אפשר להגדיר באפליקציה הפקדה חודשית קבועה. לקופת גמל להשקעה מגדירים הוראת קבע מול הקופה עצמה. כך החיסכון קורה לבד, לפני שהכסף מתבזבז.</p>
+    <details class="more"><summary>לאן ואיך?</summary><p><b>לאן:</b> ${S.toCushion?'ל<b>קרן כספית</b> או פיקדון, עד שכרית הביטחון מלאה. אחרי זה ממשיכים לקופת גמל להשקעה או לפי ההצעה בלשונית "השקעות".':'כרית הביטחון מלאה, אז אפשר לשים את זה ב<b>קופת גמל להשקעה</b> או לפי ההצעה בלשונית "השקעות".'}</p>
+    <p><b>איך:</b> ברוב הבנקים ובתי ההשקעות אפשר להגדיר באפליקציה הפקדה חודשית קבועה. לקופת גמל להשקעה מגדירים הוראת קבע מול הקופה עצמה. כך החיסכון קורה לבד, לפני שהכסף מתבזבז.</p></details>
     <p class="small muted">${why}</p>
   </div>`;
 }
@@ -2639,7 +2772,7 @@ function viewBackup(){
   const hasDemo = db.tx.some(t=>t.demo);
   return `
   <div class="card"><h2>🔒 איפה המידע שלי?</h2>
-    <p>כל המידע נשמר <b>רק במחשב הזה, בתוך הדפדפן</b>. התוכנה חסומה מלתקשר עם האינטרנט (חסימה מובנית בקוד), כך שאי אפשר לשלוח ממנה שום נתון החוצה.</p>
+    <p>הכל נשמר <b>רק במחשב הזה</b>. התוכנה חסומה לאינטרנט ולא יכולה לשלוח שום נתון החוצה.</p>
     <p class="small muted">חשוב לדעת: אם תמחק את היסטוריית הדפדפן ("נתוני אתרים" / "קובצי Cookie"), או תפתח את הקובץ בדפדפן אחר, הנתונים לא יופיעו שם. לכן כדאי לשמור גיבוי פעם בחודש.</p>
   </div>
   <div class="card"><h2>גיבוי</h2>
@@ -2650,18 +2783,21 @@ function viewBackup(){
     </div>
     <p class="small muted">${db.tx.length} תנועות שמורות כרגע.</p>
   </div>
+  <div class="card"><h2>🎨 תצוגה</h2>
+    <div class="seg"><button data-theme-set="auto" class="${(db.settings.theme||'auto')==='auto'?'on':''}">אוטומטי</button><button data-theme-set="light" class="${db.settings.theme==='light'?'on':''}">בהיר</button><button data-theme-set="dark" class="${db.settings.theme==='dark'?'on':''}">כהה</button></div>
+  </div>
   <div class="card"><h2>🔄 עדכוני גרסה</h2>
-    <p>זו גרסה <b>${APP_VERSION}</b>. בכל פעם שפותחים את התוכנה מהאייקון בשולחן העבודה, היא בודקת לבד אם יש גרסה חדשה ושואלת אם לעדכן. כדי לבדוק עכשיו: סוגרים את החלון ופותחים שוב מהאייקון.</p>
+    <p>גרסה <b>${APP_VERSION}</b>. כל פתיחה מהאייקון בודקת אם יש גרסה חדשה. לבדיקה עכשיו: סוגרים ופותחים שוב.</p>
     <p class="small muted">הבדיקה רק מורידה את קובץ התוכנה החדש. שום נתון שלכם לא נשלח, והנתונים נשארים אחרי העדכון.</p>
   </div>
   <div class="card"><h2>👫 חיבור עם המחשב של אשתך</h2>
-    <p>אפשר שכל אחד יעבוד במחשב או בטלפון שלו, ולחבר את הנתונים <b>בלי אינטרנט</b>:</p>
-    <ol>
+    <p>כל אחד עובד במחשב שלו, ומחברים את הנתונים <b>בלי אינטרנט</b>.</p>
+    <details class="more"><summary>איך עושים את זה?</summary><ol>
       <li>במחשב של אשתך: לוחצים "שמור קובץ גיבוי".</li>
       <li>מעבירים את הקובץ למחשב שלך, הכי בטוח בדיסק און קי.</li>
       <li>אצלך: לוחצים "מזג נתונים מקובץ". התנועות שלה מתווספות לשלך, ותנועות שכבר קיימות לא נכפלות.</li>
       <li>כדי שגם אצלה יהיה הכל, עושים אותו דבר בכיוון ההפוך.</li>
-    </ol>
+    </ol></details>
     <label class="btn primary">🔗 מזג נתונים מקובץ<input type="file" id="mergeFile" accept=".json" class="hidden"></label>
     <p class="small muted">הגיבוי הוא המידע הפרטי שלכם. אם בכל זאת שולחים אותו בווטסאפ או במייל, כדאי למחוק אותו משם אחרי ההעברה.</p>
     <h3>החשבונות</h3>
@@ -2796,6 +2932,7 @@ document.addEventListener('click', e=>{
     (imp.enrich||[]).forEach(({x, note})=>{ x.note = note; x.noteSrc = 'file'; recat(x); });
     if(!owner){ toast('בחר של מי הקובץ'); return; }
     if(imp.acct){ db.settings.acctOwner = {...(db.settings.acctOwner||{}), [imp.acct]: owner}; }
+    rememberCols();
     const impId = db.nextId++;
     const balChanged = bal && (!oldB || oldB.src==='manual' || bal.date >= oldB.date);
     if(balChanged) db.balances[owner] = {...bal, src:'file', imp: impId};
