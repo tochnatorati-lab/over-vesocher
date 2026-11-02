@@ -295,7 +295,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .picker{position:fixed;z-index:60;background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow-lg);padding:8px;width:270px;max-height:min(440px,70vh);display:flex;flex-direction:column;gap:8px;animation:pickin .14s ease-out}
 .picker.wide{width:440px}
 .picker .ph{font-size:12.5px;color:var(--muted);font-weight:600;padding:4px 8px 0}
-.picker .plist{overflow:auto;display:grid;grid-template-columns:1fr;gap:3px}
+.picker .plist{overflow:auto;overscroll-behavior:contain;display:grid;grid-template-columns:1fr;gap:3px}
 .picker.wide .plist{grid-template-columns:1fr 1fr}
 .picker .plist button{all:unset;box-sizing:border-box;cursor:pointer;padding:10px 12px;border-radius:10px;font-size:14px;line-height:1.35;color:var(--text)}
 .picker .plist button:hover,.picker .plist button:focus-visible{background:var(--bg)}
@@ -395,7 +395,7 @@ details.fold[open] > summary::after{content:'▴'}
 'use strict';
 // גרסת התוכנה. קובץ ההפעלה (launch.vbs) קורא את שתי השורות האלה כדי לבדוק אם יש גרסה חדשה.
 // הבדיקה מורידה רק את קובץ התוכנה. התוכנה עצמה חסומה לאינטרנט ולא שולחת שום נתון.
-const APP_VERSION = '1.2.2';
+const APP_VERSION = '1.2.3';
 const UPDATE_BASE_URL = 'https://raw.githubusercontent.com/tochnatorati-lab/over-vesocher/main/';
 /* =====================================================================
    עובר וסוחר: ניהול הכסף של הבית. קובץ אחד, בלי אינטרנט.
@@ -458,7 +458,7 @@ function cashBalance(){
   const S = db.settings.cashStart || {amount:0, date:'0000-00-00', id:0};
   let v = +S.amount||0;
   db.tx.forEach(t=>{ if(t.splitOf) return; const a = +(t.origAmount ?? t.amount);
-    if(t.owner===CASH){ if(t.date > S.date || (t.date===S.date && t.id >= S.id)) v += t.type==='income' ? a : -a; }
+    if(t.owner===CASH){ if(t.id >= (S.id||0) || t.date > S.date) v += t.type==='income' ? a : -a; }
     else if(!t.card && t.date > S.date){ if(t.category===CASH_OUT && t.type==='expense') v += a; else if(t.category===CASH_IN && t.type==='income') v -= a; } });
   return Math.round(v*100)/100;
 }
@@ -2469,6 +2469,15 @@ function pickValue(sel, v){
   if(sel.value === v){ syncPicks(); return; }
   sel.value = v; sel.dispatchEvent(new Event('change', {bubbles:true})); setTimeout(syncPicks, 0);
 }
+function placePicker(){
+  const pop = document.querySelector('.picker'); if(!pop || innerWidth <= 700) return;
+  const btn = pop._btn; if(!btn.isConnected){ closePicker(); return; }
+  const r = btn.getBoundingClientRect(), h = pop.offsetHeight, w = pop.offsetWidth;
+  if(pop._up == null) pop._up = r.bottom + 6 + h > innerHeight && r.top - h - 6 > 0;
+  const top = pop._up ? r.top - h - 6 : r.bottom + 6;
+  pop.style.top = Math.min(Math.max(8, top), innerHeight - h - 8) + 'px';
+  pop.style.left = Math.min(Math.max(8, r.right - w), innerWidth - w - 8) + 'px';
+}
 function closePicker(){ document.querySelectorAll('.picker,.pickback').forEach(x=>x.remove()); }
 function openPicker(btn){
   closePicker(); window._pkT = Date.now();
@@ -2479,11 +2488,7 @@ function openPicker(btn){
     <div class="plist">${opts.map(o=>`<button type="button" data-pv="${esc(o.value)}" class="${o.value===sel.value?'on':''}">${esc(optText(o))}</button>`).join('')}</div>`;
   if(innerWidth <= 700){ const bk = document.createElement('div'); bk.className = 'pickback'; document.body.append(bk); }
   document.body.append(pop);
-  if(innerWidth > 700){
-    const r = btn.getBoundingClientRect(), h = pop.offsetHeight, w = pop.offsetWidth;
-    pop.style.top = (r.bottom + 6 + h > innerHeight ? Math.max(8, r.top - h - 6) : r.bottom + 6) + 'px';
-    pop.style.left = Math.min(Math.max(8, r.right - w), innerWidth - w - 8) + 'px';
-  }
+  pop._up = null; placePicker();
   const on = pop.querySelector('.plist button.on'); if(on) on.scrollIntoView({block:'nearest'});
   const q = pop.querySelector('.psearch'); if(q && innerWidth > 700) q.focus();
 }
@@ -2497,7 +2502,7 @@ document.addEventListener('input', e=>{ if(e.target.classList.contains('psearch'
   e.target.closest('.picker').querySelectorAll('.plist button').forEach(b=>b.style.display = !q || b.textContent.includes(q) ? '' : 'none'); } });
 document.addEventListener('keydown', e=>{ if(e.key==='Escape') closePicker();
   if(e.key==='Enter' && e.target.classList.contains('psearch')){ const b = [...e.target.closest('.picker').querySelectorAll('.plist button')].find(x=>x.style.display!=='none'); if(b) b.click(); } });
-window.addEventListener('scroll', e=>{ if(Date.now()-(window._pkT||0) > 400 && !(e.target.closest && e.target.closest('.picker'))) closePicker(); }, true);
+window.addEventListener('scroll', e=>{ if(e.target.closest && e.target.closest('.picker')) return; placePicker(); }, true);
 window.addEventListener('resize', closePicker);
 // רשימות שנוספות אחרי הציור (תצוגה מקדימה של ייבוא, טפסים נפתחים) ועדכוני ערך מהקוד
 new MutationObserver(()=>{ if(document.querySelector('#main select:not([data-fx])')) enhanceSelects(); }).observe(document.getElementById('main'), {childList:true, subtree:true});
